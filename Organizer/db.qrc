@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>notes.sqlite</file>
+    </qresource>
+</RCC>

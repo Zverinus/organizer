@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/icons"/>
+    <qresource prefix="/">
+        <file>images/icons/alignblock.png</file>
+        <file>images/icons/alignhorizontalcenter.png</file>
+        <file>images/icons/alignleft.png</file>
+        <file>images/icons/alignright.png</file>
+        <file>images/icons/bold.png</file>
+        <file>images/icons/datefield.png</file>
+        <file>images/icons/defaultbullet.png</file>
+        <file>images/icons/defaultnumbering.png</file>
+        <file>images/icons/italic.png</file>
+        <file>images/icons/save.png</file>
+        <file>images/icons/strikeout.png</file>
+        <file>images/icons/timefield.png</file>
+        <file>images/icons/underline.png</file>
+        <file>images/icons/copy.png</file>
+        <file>images/icons/exportto.png</file>
+        <file>images/icons/newdoc.png</file>
+        <file>images/icons/newrecord.png</file>
+        <file>images/icons/paste.png</file>
+        <file>images/icons/renamepage.png</file>
+        <file>images/icons/tabledesign.png</file>
+        <file>images/icons/color.png</file>
+        <file>images/icons/searchdialog.png</file>
+        <file>images/icons/delete.png</file>
+        <file>images/icons/key.png</file>
+    </qresource>
+</RCC>
