@@ -13,7 +13,7 @@ CatalogTreeItem::CatalogTreeItem(const QStringList& name, int id, QString path, 
     } else {
         parentId = 0;
     }
-
+    this->name = name[0];
     level = splitted.size() - 1;
 
 
@@ -52,4 +52,8 @@ int CatalogTreeItem::getParentId() {
 
 int CatalogTreeItem::getLevel() {
     return level;
+}
+
+QString CatalogTreeItem::getName() {
+    return name;
 }

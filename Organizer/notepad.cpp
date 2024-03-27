@@ -1,6 +1,7 @@
 #include "notepad.h"
 #include "ui_notepad.h"
 #include <chrono>
+#include<QColorDialog>
 
 Notepad::Notepad(QWidget *parent)
     : QWidget(parent)
@@ -42,6 +43,8 @@ void Notepad::setupToolButtons() {
     connect(ui->currentTime, &QToolButton::clicked, this, &Notepad::currentTime);
 
     connect(ui->table, &QToolButton::clicked, this, &Notepad::table);
+
+    connect(ui->fontColor, &QToolButton::clicked, this, &Notepad::fontColor);
 
     connect(ui->textField, &QTextEdit::currentCharFormatChanged, this, &Notepad::onCurrentCharFormatChanged);
     connect(ui->textField, &QTextEdit::cursorPositionChanged, this, &Notepad::onCursorPositionChanged);
@@ -112,7 +115,15 @@ void Notepad::strikeout() {
 }
 
 void Notepad::fontColor() {
+    QTextCharFormat format;
 
+    QColor color = QColorDialog::getColor(QColor(0, 0, 0), this);
+    format.setForeground(color);
+
+    QTextCursor cursor = ui->textField->textCursor();
+
+    cursor.mergeCharFormat(format);
+    ui->textField->mergeCurrentCharFormat(format);
 }
 
 void Notepad::alignBlock() {
@@ -210,6 +221,7 @@ void Notepad::onCurrentCharFormatChanged(const QTextCharFormat& format) {
     ui->italic->setChecked(font.italic());
     ui->underline->setChecked(font.underline());
     ui->strikeout->setChecked(font.strikeOut());
+    ui->fontSize->setValue(format.fontPointSize());
 }
 
 void Notepad::onCursorPositionChanged() {
@@ -218,6 +230,13 @@ void Notepad::onCursorPositionChanged() {
 
 void Notepad::setText(QString document) {
     ui->textField->setHtml(document);
+
+
+    ui->textField->textCursor().movePosition(QTextCursor::Start);
+    QFont font = ui->textField->font();
+
+    ui->fontSize->setValue(font.pointSize());
+
 }
 
 QString Notepad::getHtml() {
@@ -228,3 +247,16 @@ Notepad::~Notepad()
 {
     delete ui;
 }
+
+
+void Notepad::on_fontSize_valueChanged(double arg1)
+{
+    QTextCharFormat format;
+    format.setFontPointSize(arg1);
+
+    QTextCursor cursor = ui->textField->textCursor();
+
+    cursor.mergeCharFormat(format);
+    ui->textField->mergeCurrentCharFormat(format);
+}
+

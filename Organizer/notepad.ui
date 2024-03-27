@@ -49,9 +49,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QFontComboBox" name="fontComboBox"/>
-      </item>
-      <item>
        <widget class="QDoubleSpinBox" name="fontSize">
         <property name="suffix">
          <string> pt</string>

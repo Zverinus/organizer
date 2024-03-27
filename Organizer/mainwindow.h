@@ -52,6 +52,10 @@ private slots:
 
     void on_save_triggered();
 
+    void on_search_triggered();
+
+    void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
 private:
     struct Buffer
     {

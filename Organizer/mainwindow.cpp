@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QPrinter>
 #include <QDialogButtonBox>
+#include "globalsearch.h"
 #include "passwordgenerator.h"
 
 
@@ -195,7 +196,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
         ui->stackedWidget->setCurrentWidget(notepad);
         notepad->setText(i->getDocument());
     } else {
-
+        ui->stackedWidget->setCurrentWidget(nullptr);
     }
 
 }
@@ -385,5 +386,19 @@ void MainWindow::on_save_triggered()
     } else {
         qDebug() << query.lastError() << ' ' << query.lastQuery();
     }
+}
+
+
+void MainWindow::on_search_triggered()
+{
+    GlobalSearch* search = new GlobalSearch(this, &items, ui->stackedWidget, ui->treeWidget);
+    search->exec();
+    ui->search->setEnabled(false);
+}
+
+
+void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    on_treeWidget_itemClicked(current, 0);
 }
 

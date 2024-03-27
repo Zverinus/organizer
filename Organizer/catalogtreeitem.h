@@ -16,8 +16,10 @@ public:
     int getParentId();
     int getLevel();
     void setDocument(QString doc);
+    QString getName();
 
 private:
+    QString name;
     int id;
     int parentId;
     int level;

@@ -14,22 +14,21 @@ CONFIG += c++17
 SOURCES += \
     catalogtreeitem.cpp \
     main.cpp \
-    catalogtile.cpp \
     globalsearch.cpp \
     notepad.cpp \
     passwordgenerator.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    searchitem.cpp
 
 HEADERS += \
-    catalogtile.h \
     catalogtreeitem.h \
     globalsearch.h \
     notepad.h \
     passwordgenerator.h \
-    mainwindow.h
+    mainwindow.h \
+    searchitem.h
 
 FORMS += \
-    catalogtile.ui \
     globalsearch.ui \
     notepad.ui \
     passwordgenerator.ui \

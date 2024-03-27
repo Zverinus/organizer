@@ -44,6 +44,7 @@ private slots:
 
     void onCurrentCharFormatChanged(const QTextCharFormat& format);
     void onCursorPositionChanged();
+    void on_fontSize_valueChanged(double arg1);
 };
 
 
