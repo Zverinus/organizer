@@ -25,6 +25,7 @@ private:
     void setupFromSave();
     void setupToolButtons();
     void setAlignment(Qt::Alignment alignment);
+    void setDefault();
 
 private slots:
     void bold();
@@ -40,7 +41,7 @@ private slots:
     void currentTime();
     void bulletList();
     void numericList();
-    void table();
+
 
     void onCurrentCharFormatChanged(const QTextCharFormat& format);
     void onCursorPositionChanged();

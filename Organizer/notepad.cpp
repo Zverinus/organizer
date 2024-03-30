@@ -1,7 +1,8 @@
 #include "notepad.h"
 #include "ui_notepad.h"
 #include <chrono>
-#include<QColorDialog>
+#include <QColorDialog>
+#include <QTextList>
 
 Notepad::Notepad(QWidget *parent)
     : QWidget(parent)
@@ -10,7 +11,6 @@ Notepad::Notepad(QWidget *parent)
     ui->setupUi(this);
 
     setupToolButtons();
-    setupFromSave();
 }
 
 void Notepad::setupToolButtons() {
@@ -42,12 +42,15 @@ void Notepad::setupToolButtons() {
 
     connect(ui->currentTime, &QToolButton::clicked, this, &Notepad::currentTime);
 
-    connect(ui->table, &QToolButton::clicked, this, &Notepad::table);
 
     connect(ui->fontColor, &QToolButton::clicked, this, &Notepad::fontColor);
 
     connect(ui->textField, &QTextEdit::currentCharFormatChanged, this, &Notepad::onCurrentCharFormatChanged);
     connect(ui->textField, &QTextEdit::cursorPositionChanged, this, &Notepad::onCursorPositionChanged);
+
+
+    connect(ui->bulletList, &QToolButton::clicked, this, &Notepad::bulletList);
+    connect(ui->numericList, &QToolButton::clicked, this, &Notepad::numericList);
 }
 
 
@@ -136,7 +139,7 @@ void Notepad::alignBlock() {
 }
 
 void Notepad::alignLeft() {
-    ui->textField->setAlignment(Qt::AlignLeft);
+    ui->textField->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
     ui->alignLeft->setChecked(true);
 
     ui->alignBlock->setChecked(false);
@@ -154,7 +157,7 @@ void Notepad::alignCenter() {
 }
 
 void Notepad::alignRight() {
-    ui->textField->setAlignment(Qt::AlignRight);
+    ui->textField->setAlignment(Qt::AlignRight | Qt::AlignAbsolute);
     ui->alignRight->setChecked(true);
 
     ui->alignCenter->setChecked(false);
@@ -163,26 +166,24 @@ void Notepad::alignRight() {
 }
 
 void Notepad::setAlignment(Qt::Alignment alignment) {
-    switch (alignment) {
-    case Qt::AlignJustify:
+    if (alignment & Qt::AlignJustify)
         alignBlock();
-        break;
-    case Qt::AlignLeft:
+    if (alignment & Qt::AlignLeft)
         alignLeft();
-        break;
-    case Qt::AlignCenter:
+    if (alignment & Qt::AlignCenter)
         alignCenter();
-        break;
-    case Qt::AlignRight:
+    if (alignment & Qt::AlignRight)
         alignRight();
-        break;
-    default:
-        break;
-    }
+
 }
 
 void Notepad::currentDate() {
     QTextCursor cursor = ui->textField->textCursor();
+
+    cursor.movePosition(QTextCursor::EndOfLine);
+    cursor.insertHtml("\n");
+    cursor.movePosition(QTextCursor::NextRow);
+
 
     auto dateChrono = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto dateLocal = std::localtime(&dateChrono);
@@ -190,11 +191,16 @@ void Notepad::currentDate() {
     std::strftime(buf, std::size(buf), "%a %d-%m-%Y", dateLocal);
 
     QString dateString(buf);
-    cursor.insertText(dateString);
+
+    cursor.insertHtml("<br><p align=\"left\">" + dateString + "</p><hr><br>");
 }
 
 void Notepad::currentTime() {
     QTextCursor cursor = ui->textField->textCursor();
+
+    cursor.movePosition(QTextCursor::EndOfLine);
+    cursor.insertHtml("\n");
+    cursor.movePosition(QTextCursor::NextRow);
 
     auto timeChrono = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto timeLocal = std::localtime(&timeChrono);
@@ -202,15 +208,50 @@ void Notepad::currentTime() {
     std::strftime(buf, std::size(buf), "%T", timeLocal);
 
     QString timeString(buf);
-    cursor.insertText(timeString);
+    cursor.insertHtml("<br><p align=\"left\">" + timeString + "</p><hr><br>");
 }
 
-void Notepad::bulletList() {}
+void Notepad::bulletList() {
+    QTextCursor cursor = ui->textField->textCursor();
+    QTextListFormat format;
+    QTextBlockFormat blockFormat = cursor.blockFormat();
 
-void Notepad::numericList() {}
+    cursor.beginEditBlock();
 
-void Notepad::table() {
+    if (cursor.currentList()) {
+        format = cursor.currentList()->format();
+    } else {
+        format.setIndent(blockFormat.indent() + 1);
+        blockFormat.setIndent(0);
+        cursor.setBlockFormat(blockFormat);
+    }
 
+    format.setStyle(QTextListFormat::ListCircle);
+    cursor.createList(format);
+
+    cursor.endEditBlock();
+
+}
+
+void Notepad::numericList() {
+    QTextCursor cursor = ui->textField->textCursor();
+    QTextListFormat format;
+    QTextBlockFormat blockFormat = cursor.blockFormat();
+
+    cursor.beginEditBlock();
+
+    if (cursor.currentList()) {
+        format = cursor.currentList()->format();
+    } else {
+        format.setIndent(blockFormat.indent() + 1);
+        blockFormat.setIndent(0);
+        cursor.setBlockFormat(blockFormat);
+    }
+
+    format.setStyle(QTextListFormat::ListDecimal);
+    cursor.createList(format);
+
+    cursor.endEditBlock();
 }
 
 
@@ -221,7 +262,7 @@ void Notepad::onCurrentCharFormatChanged(const QTextCharFormat& format) {
     ui->italic->setChecked(font.italic());
     ui->underline->setChecked(font.underline());
     ui->strikeout->setChecked(font.strikeOut());
-    ui->fontSize->setValue(format.fontPointSize());
+    ui->fontSize->setValue(font.pointSizeF());
 }
 
 void Notepad::onCursorPositionChanged() {
@@ -230,9 +271,9 @@ void Notepad::onCursorPositionChanged() {
 
 void Notepad::setText(QString document) {
     ui->textField->setHtml(document);
-
-
-    ui->textField->textCursor().movePosition(QTextCursor::Start);
+    setDefault();
+    ui->textField->textCursor().movePosition(QTextCursor::StartOfLine);
+    setAlignment(ui->textField->alignment());
     QFont font = ui->textField->font();
 
     ui->fontSize->setValue(font.pointSize());
@@ -260,3 +301,10 @@ void Notepad::on_fontSize_valueChanged(double arg1)
     ui->textField->mergeCurrentCharFormat(format);
 }
 
+
+void Notepad::setDefault() {
+    ui->bold->setChecked(false);
+    ui->italic->setChecked(false);
+    ui->strikeout->setChecked(false);
+    ui->underline->setChecked(false);
+}

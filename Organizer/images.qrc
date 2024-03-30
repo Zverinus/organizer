@@ -25,5 +25,6 @@
         <file>images/icons/searchdialog.png</file>
         <file>images/icons/delete.png</file>
         <file>images/icons/key.png</file>
+        <file>images/icons/hide.png</file>
     </qresource>
 </RCC>

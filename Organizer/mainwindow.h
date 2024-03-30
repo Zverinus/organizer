@@ -5,6 +5,7 @@
 #include <QtSql>
 #include <QTreeWidgetItem>
 #include "catalogtreeitem.h"
+#include <QCalendarWidget>
 #include "notepad.h"
 
 QT_BEGIN_NAMESPACE
@@ -56,6 +57,12 @@ private slots:
 
     void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
+    void on_hide_triggered();
+
+    void on_treeWidget_expanded(const QModelIndex &index);
+
+    void on_treeWidget_collapsed(const QModelIndex &index);
+
 private:
     struct Buffer
     {
@@ -67,7 +74,8 @@ private:
     QVector<CatalogTreeItem*> items;
     Buffer buffer;
     Notepad* notepad;
-    Ui::MainWindow *ui;
+    QWidget* space;
+    Ui::MainWindow* ui;
 
 
 };

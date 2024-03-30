@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QPrinter>
 #include <QDialogButtonBox>
+#include <QCalendarWidget>
 #include "globalsearch.h"
 #include "passwordgenerator.h"
 
@@ -32,8 +33,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     notepad = new Notepad;
+    space = new QWidget;
 
     ui->stackedWidget->addWidget(notepad);
+    ui->stackedWidget->addWidget(space);
 }
 
 
@@ -81,6 +84,8 @@ void MainWindow::buildTree() {
         ui->treeWidget->expandAll();
         ui->treeWidget->topLevelItem(0)->setSelected(true);
     }
+
+    ui->treeWidget->resizeColumnToContents(0);
 }
 
 
@@ -115,6 +120,8 @@ void MainWindow::addItem(CatalogTreeItem* parent, QString name, bool isNote, QSt
     } else {
         qDebug() << query.lastError() << ' ' << query.lastQuery();
     }
+
+    ui->treeWidget->resizeColumnToContents(0);
 }
 
 
@@ -148,6 +155,8 @@ void MainWindow::deleteItem(CatalogTreeItem* item) {
     }  else {
         qDebug() << query.lastError() << ' ' << query.lastQuery();
     }
+
+    ui->treeWidget->resizeColumnToContents(0);
 }
 
 
@@ -196,7 +205,7 @@ void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
         ui->stackedWidget->setCurrentWidget(notepad);
         notepad->setText(i->getDocument());
     } else {
-        ui->stackedWidget->setCurrentWidget(nullptr);
+        ui->stackedWidget->setCurrentWidget(space);
     }
 
 }
@@ -226,6 +235,8 @@ void MainWindow::on_newNote_triggered()
             addItem(item, name, true, "");
         }
     }
+
+    ui->treeWidget->resizeColumnToContents(0);
 }
 
 
@@ -253,6 +264,8 @@ void MainWindow::on_newFolder_triggered()
             addItem(item, name, false, "");
         }
     }
+
+    ui->treeWidget->resizeColumnToContents(0);
 }
 
 
@@ -279,6 +292,8 @@ void MainWindow::on_paste_triggered()
     } else {
         addItem(item, buffer.name, buffer.isNote, buffer.document);
     }
+
+    ui->treeWidget->resizeColumnToContents(0);
 }
 
 
@@ -318,6 +333,8 @@ void MainWindow::on_rename_triggered()
     if (isOk && !name.isEmpty()) {
         renameItem(item, name);
     }
+
+    ui->treeWidget->resizeColumnToContents(0);
 }
 
 
@@ -336,6 +353,10 @@ void MainWindow::on_exportto_triggered()
     }
 
     CatalogTreeItem* item = static_cast<CatalogTreeItem*>(ui->treeWidget->currentItem());
+
+    if (!item->getIsNote()) {
+        return;
+    }
 
     QFileDialog exportDialog(this, QString("Экспорт в html"));
     exportDialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -393,12 +414,33 @@ void MainWindow::on_search_triggered()
 {
     GlobalSearch* search = new GlobalSearch(this, &items, ui->stackedWidget, ui->treeWidget);
     search->exec();
-    ui->search->setEnabled(false);
 }
 
 
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     on_treeWidget_itemClicked(current, 0);
+}
+
+
+void MainWindow::on_hide_triggered()
+{
+    if (ui->hide->isChecked()) {
+        ui->treeWidget->hide();
+    } else {
+        ui->treeWidget->show();
+    }
+}
+
+
+void MainWindow::on_treeWidget_expanded(const QModelIndex &index)
+{
+    ui->treeWidget->resizeColumnToContents(index.column());
+}
+
+
+void MainWindow::on_treeWidget_collapsed(const QModelIndex &index)
+{
+    ui->treeWidget->resizeColumnToContents(index.column());
 }
 
