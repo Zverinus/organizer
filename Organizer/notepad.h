@@ -41,6 +41,7 @@ private slots:
     void currentTime();
     void bulletList();
     void numericList();
+    void imageInsert();
 
 
     void onCurrentCharFormatChanged(const QTextCharFormat& format);

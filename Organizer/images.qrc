@@ -26,5 +26,6 @@
         <file>images/icons/delete.png</file>
         <file>images/icons/key.png</file>
         <file>images/icons/hide.png</file>
+        <file>images/icons/imagebutton.png</file>
     </qresource>
 </RCC>

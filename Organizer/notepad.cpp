@@ -2,7 +2,9 @@
 #include "ui_notepad.h"
 #include <chrono>
 #include <QColorDialog>
+#include <QFileDialog>
 #include <QTextList>
+#include <QImageReader>
 
 Notepad::Notepad(QWidget *parent)
     : QWidget(parent)
@@ -51,6 +53,8 @@ void Notepad::setupToolButtons() {
 
     connect(ui->bulletList, &QToolButton::clicked, this, &Notepad::bulletList);
     connect(ui->numericList, &QToolButton::clicked, this, &Notepad::numericList);
+
+    connect(ui->imageInsert, &QToolButton::clicked, this, &Notepad::imageInsert);
 }
 
 
@@ -299,6 +303,46 @@ void Notepad::on_fontSize_valueChanged(double arg1)
 
     cursor.mergeCharFormat(format);
     ui->textField->mergeCurrentCharFormat(format);
+}
+
+
+void Notepad::imageInsert() {
+    QFileDialog dialog(this, "Выберите изображение");
+    dialog.setAcceptMode(QFileDialog::AcceptOpen);
+
+    dialog.setMimeTypeFilters(QStringList({"image/jpeg", "image/png"}));
+
+    if (dialog.exec() != QDialog::Accepted) {
+        return;
+    }
+
+    QString path = dialog.selectedFiles().first();
+    QString filename = path;
+    filename = "data/" + filename.replace("/", "++").replace(":", "");
+    QFile::copy(path, filename);
+    QImage image = QImageReader(filename).read();
+
+    ui->textField->document()->addResource(QTextDocument::ImageResource, QUrl(filename), QVariant(image));
+    QTextCursor cursor = ui->textField->textCursor();
+
+    qreal max_size = 500.0;
+
+    qreal width = image.width();
+    qreal height = image.height();
+    if (width > max_size) {
+        height = height * max_size / width;
+        width = max_size;
+    }
+    if (height > max_size) {
+        width = width * max_size / height;
+        height = max_size;
+    }
+
+    QTextImageFormat format;
+    format.setHeight(height);
+    format.setWidth(width);
+    format.setName(filename);
+    cursor.insertImage(format);
 }
 
 
