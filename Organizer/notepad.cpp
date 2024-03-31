@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QTextList>
 #include <QImageReader>
+#include <QTextEdit>
 
 Notepad::Notepad(QWidget *parent)
     : QWidget(parent)
@@ -318,7 +319,13 @@ void Notepad::imageInsert() {
 
     QString path = dialog.selectedFiles().first();
     QString filename = path;
+
+    if (!QDir("data").exists()) {
+        QDir().mkdir("data");
+    }
+
     filename = "data/" + filename.replace("/", "++").replace(":", "");
+
     QFile::copy(path, filename);
     QImage image = QImageReader(filename).read();
 
