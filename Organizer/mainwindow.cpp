@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Органайзер");
+    this->setWindowIcon(QIcon(":/images/icons/newdoc.png"));
 
     setupActions();
 
@@ -128,7 +130,7 @@ void MainWindow::addItem(CatalogTreeItem* parent, QString name, bool isNote, QSt
 void MainWindow::deleteItem(CatalogTreeItem* item) {
     if (item->getId() == 0) {
         QMessageBox::warning(this,
-                             QString("Поытка изменения корневой папки"),
+                             QString("Попытка изменения корневой папки"),
                              QString("Вы не можете удалить корневую папку!"),
                              QMessageBox::Ok);
 
